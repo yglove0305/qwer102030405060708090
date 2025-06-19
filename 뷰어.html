@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Display Page</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+    }
+    #displayArea {
+      font-size: 4rem;
+      font-weight: bold;
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    #imageArea img {
+      max-width: 90%;
+      max-height: 70%;
+      border: 2px solid #333;
+    }
+  </style>
+  <script>
+    let attempts = 0;
+    const maxAttempts = 50; // 10초 동안 업데이트 (0.2초 x 50)
+
+    function displayContent() {
+      const sharedText = localStorage.getItem('sharedText');
+      const sharedImage = localStorage.getItem('sharedImage');
+
+      document.getElementById('displayArea').textContent = sharedText || 'No text found.';
+      const imageContainer = document.getElementById('imageArea');
+      imageContainer.innerHTML = ''; // 기존 이미지를 초기화
+
+      if (sharedImage) {
+        const imgElement = document.createElement('img');
+        imgElement.src = sharedImage;
+        imageContainer.appendChild(imgElement);
+      } else {
+        imageContainer.textContent = 'No image found.';
+      }
+    }
+
+    function startRealTimeUpdates() {
+      const interval = setInterval(() => {
+        displayContent();
+        attempts += 1;
+        if (attempts >= maxAttempts) {
+          clearInterval(interval); // 10초 후 업데이트 중지
+        }
+      }, 200); // 0.2초 간격으로 업데이트
+    }
+
+    window.onload = startRealTimeUpdates;
+  </script>
+</head>
+<body>
+  <div id="displayArea"></div>
+  <div id="imageArea"></div>
+</body>
+</html>

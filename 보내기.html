@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Input Page</title>
+  <script>
+    function sendContent() {
+      const inputText = document.getElementById('textInput').value;
+      const imageFile = document.getElementById('imageInput').files[0];
+
+      if (imageFile) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const imageData = event.target.result;
+          localStorage.setItem('sharedText', inputText);
+          localStorage.setItem('sharedImage', imageData);
+          alert('Text and image saved locally. Open 2.html to view them.');
+        };
+        reader.readAsDataURL(imageFile);
+      } else {
+        localStorage.setItem('sharedText', inputText);
+        localStorage.removeItem('sharedImage'); // No image selected
+        alert('Text saved locally. Open 2.html to view it.');
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>Input Page (1.html)</h1>
+  <input type="text" id="textInput" placeholder="Enter your text here"><br><br>
+  <input type="file" id="imageInput" accept="image/*"><br><br>
+  <button onclick="sendContent()">Send</button>
+</body>
+</html>

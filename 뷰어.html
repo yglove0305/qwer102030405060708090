@@ -27,22 +27,32 @@
       max-height: 70%;
       border: 2px solid #333;
     }
+    #imageArea {
+      text-align: center;
+    }
   </style>
   <script>
     let attempts = 0;
     const maxAttempts = 50; // 10초 동안 업데이트 (0.2초 x 50)
+    let interval = null;
 
     function displayContent() {
       const sharedText = localStorage.getItem('sharedText');
       const sharedImage = localStorage.getItem('sharedImage');
 
-      document.getElementById('displayArea').textContent = sharedText || 'No text found.';
+      const displayArea = document.getElementById('displayArea');
+      displayArea.textContent = sharedText && sharedText.trim() ? sharedText : 'No text found.';
+
       const imageContainer = document.getElementById('imageArea');
       imageContainer.innerHTML = ''; // 기존 이미지를 초기화
 
-      if (sharedImage) {
+      if (sharedImage && sharedImage.trim()) {
         const imgElement = document.createElement('img');
         imgElement.src = sharedImage;
+        imgElement.alt = 'Shared Image';
+        imgElement.onerror = () => {
+          imageContainer.textContent = 'Image load error.';
+        };
         imageContainer.appendChild(imgElement);
       } else {
         imageContainer.textContent = 'No image found.';
@@ -50,7 +60,9 @@
     }
 
     function startRealTimeUpdates() {
-      const interval = setInterval(() => {
+      // 최초 1회 갱신
+      displayContent();
+      interval = setInterval(() => {
         displayContent();
         attempts += 1;
         if (attempts >= maxAttempts) {
@@ -60,6 +72,9 @@
     }
 
     window.onload = startRealTimeUpdates;
+    window.onunload = () => {
+      if (interval) clearInterval(interval);
+    };
   </script>
 </head>
 <body>

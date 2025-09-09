@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>서비스 워커 푸시 알림</title>
+</head>
+<body>
+  <h1>서비스 워커 푸시 알림 테스트</h1>
+  <button id="subscribe">알림 구독</button>
+
+  <script>
+    // 서비스 워커 등록
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('서비스 워커 등록 완료:', reg))
+        .catch(err => console.error('서비스 워커 등록 실패:', err));
+    }
+
+    // 알림 구독 버튼 클릭 시
+    document.getElementById('subscribe').addEventListener('click', async () => {
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        navigator.serviceWorker.ready.then(registration => {
+          registration.showNotification('백그라운드 알림입니다!', {
+            body: '이 알림은 서비스 워커를 통해 전송되었습니다.',
+            icon: 'icon.png',
+            tag: 'background-notification'
+          });
+        });
+      } else {
+        alert('알림 권한이 거부되었습니다.');
+      }
+    });
+  </script>
+</body>
+</html>
